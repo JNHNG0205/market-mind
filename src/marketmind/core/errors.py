@@ -27,6 +27,10 @@ class ToolError(BaseModel):
         return cls(code=code, message=message, retryable=code in _RETRYABLE)
 
 
+class ConfigError(Exception):
+    """Settings are missing or inconsistent; raised at startup, never mid-request."""
+
+
 class AppError(Exception):
     """Base for errors the API renders as `{"error": {"code", "message", "trace_id"}}`."""
 

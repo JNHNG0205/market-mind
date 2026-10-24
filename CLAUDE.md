@@ -37,12 +37,13 @@ docker compose up            # full stack (demo / clean-machine check)
 ## Testing
 
 - `make test` passes offline with no API keys. Use `FakeLLMProvider` with fixtures in `tests/fixtures/llm/`, and respx with recorded responses in `tests/fixtures/http/`.
-- Live tests are opt-in only: `pytest -m live` with `LIVE_TESTS=1`.
+- Live tests are opt-in only: `LIVE_TESTS=1 uv run pytest -m live` (uses the real OpenRouter key; costs fractions of a cent).
+- LLM fixtures: use the `llm_case("name")` fixture; re-record with `RECORD_LLM=1`. The SDKs use `httpx2`, so mock them with `httpx2.MockTransport` via `http_client=`, not respx.
 - Coverage of at least 80% on `agent/`, `mcp_client/`, `rag/`, `tools/`.
 
 ## Key decisions (details in DECISIONS.md)
 
-- LLMs go through OpenRouter via the `openai` SDK with a `base_url`. Every node uses `deepseek/deepseek-v4.1-flash-1017`, pinned to the DeepSeek host, with JSON mode + Pydantic validation + one retry. The fallback is `z-ai/glm-5.3-flash`.
+- LLMs go through OpenRouter via the `openai` SDK with a `base_url`. Every node uses `deepseek/deepseek-v4.1-flash-1017`, pinned to the Fireworks then Together hosts, with JSON mode + Pydantic validation + one retry. The fallback is `z-ai/glm-5.3-flash`.
 - Postgres driver is psycopg3 everywhere (`postgresql+psycopg://`); there is no asyncpg.
 - Market data: Binance public REST, with CoinGecko as the fallback. Web search: Tavily.
 - CI: GitHub Actions only.

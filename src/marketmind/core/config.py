@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     llm_model_planner: str = _DEFAULT_MODEL
     llm_model_composer: str = _DEFAULT_MODEL
     llm_fallback_model: str | None = "z-ai/glm-5.3-flash"
+    # Hosts the primary model may use, tried in order (D37). Empty means unpinned.
+    openrouter_provider_order: list[str] = ["Fireworks", "Together"]
+    llm_timeout_s: float = 30.0
+    llm_max_retries: int = 2  # SDK retries on 429/5xx before falling back
+    anthropic_effort: Literal["low", "medium", "high", "xhigh", "max"] = "low"
 
     # Embeddings (D8, used from M2)
     embedding_provider: Literal["openrouter", "local"] = "openrouter"

@@ -1,0 +1,72 @@
+{
+  "case": "json_classification",
+  "calls": [
+    {
+      "node": "router",
+      "response": {
+        "text": "{\"topic\":\"crypto\"}",
+        "tool_calls": [],
+        "usage": {
+          "tokens_in": 162,
+          "tokens_out": 48,
+          "usd": 0.00007434
+        },
+        "model": "deepseek/deepseek-v4.1-flash-1017",
+        "finish_reason": "stop",
+        "provider_raw": {
+          "content": "{\"topic\":\"crypto\"}",
+          "role": "assistant",
+          "reasoning": "We need answer classify whether user asks about crypto. \"What is BTC trading at?\" BTC is Bitcoin, crypto. Need reply JSON only matching schema: {\"topic\":\"crypto\"}. No prose.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.text",
+              "text": "We need answer classify whether user asks about crypto. \"What is BTC trading at?\" BTC is Bitcoin, crypto. Need reply JSON only matching schema: {\"topic\":\"crypto\"}. No prose.",
+              "format": "unknown",
+              "index": 0
+            }
+          ]
+        }
+      },
+      "request": {
+        "node": "router",
+        "model": "deepseek/deepseek-v4.1-flash-1017",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Classify whether the user asks about crypto.\n\nReply with one JSON object and nothing else: no prose and no code fences. The object must validate against this JSON Schema:\n\n{\n  \"properties\": {\n    \"topic\": {\n      \"enum\": [\n        \"crypto\",\n        \"other\"\n      ],\n      \"title\": \"Topic\",\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"topic\"\n  ],\n  \"title\": \"Topic\",\n  \"type\": \"object\"\n}\n",
+            "tool_calls": [],
+            "tool_call_id": null,
+            "provider_raw": null
+          },
+          {
+            "role": "user",
+            "content": "What is BTC trading at?",
+            "tool_calls": [],
+            "tool_call_id": null,
+            "provider_raw": null
+          }
+        ],
+        "tools": [],
+        "response_schema": {
+          "properties": {
+            "topic": {
+              "enum": [
+                "crypto",
+                "other"
+              ],
+              "title": "Topic",
+              "type": "string"
+            }
+          },
+          "required": [
+            "topic"
+          ],
+          "title": "Topic",
+          "type": "object"
+        },
+        "temperature": 0.0,
+        "max_tokens": 256
+      }
+    }
+  ]
+}
