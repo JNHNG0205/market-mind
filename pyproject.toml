@@ -1,0 +1,72 @@
+[project]
+name = "marketmind"
+version = "0.1.0"
+description = "Crypto research agent runtime: routed intents, Agent Skills, MCP tools, cited answers"
+authors = [
+    { name = "JNHNG0205", email = "heng.teh0205@gmail.com" }
+]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "mcp>=2.3.0",
+    "psycopg[binary]>=3.3.6",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "redis>=8.1.0",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.2",
+]
+
+[tool.uv]
+# Floor for the eMudhra/emSign CA distrust (DECISIONS.md D30). A constraint, not a dependency.
+constraint-dependencies = ["certifi>=2026.10.19"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ASYNC", "PT", "N"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["marketmind", "tests"]
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "integration: needs Postgres and Redis (docker compose); run with `make test-integration`",
+    "live: real LLM and external APIs; skipped unless LIVE_TESTS=1",
+]
+
+[tool.coverage.run]
+source = ["marketmind"]
+branch = true
+
+[tool.coverage.report]
+# SPEC §14 requires >= 80% on agent/, mcp_client/, rag/, tools/; enforced on the whole package.
+fail_under = 80
+show_missing = true
+skip_covered = true

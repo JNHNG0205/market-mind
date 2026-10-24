@@ -9,8 +9,8 @@ A Python 3.12 async service that answers crypto research questions and runs pape
 
 The user is building this project to learn it well enough to explain every part in an interview. That goal outranks speed.
 
-- **Claude may write:** scaffolding, config, Docker, CI, and boilerplate.
-- **The user writes:** the core pieces. That means the router, the executor's timeout and retry logic, the plan-and-execute loop, RRF merging, and anything else an interviewer could ask "how does this work?" about. For those, Claude writes only `TODO(you)` stubs (signatures plus `raise NotImplementedError`) and failing tests that define the behaviour. Then Claude stops.
+- **The user writes only the core pieces:** the router, the executor's timeout and retry logic, the plan-and-execute loop, and RRF merging, plus anything else the user explicitly claims later. For those, Claude writes only `TODO(you)` stubs (signatures plus `raise NotImplementedError`) and failing tests that define the behaviour. Then Claude stops.
+- **Claude writes everything else:** scaffolding, config, Docker, CI, API plumbing, adapters, persistence, tools and other boilerplate.
 - **When unsure whether something is core, ask** instead of writing it.
 - **Never merge a diff the user can't explain.** Keep diffs small and readable. When asked "why this approach over X?", answer directly.
 - **The user writes every commit message**, one line in their own words. Claude proposes no commit message unless asked, and doesn't commit until the user supplies one.
@@ -39,4 +39,4 @@ The user is building this project to learn it well enough to explain every part 
 - `mcp` 2.x renamed FastMCP to `MCPServer` (`from mcp.server.mcpserver import MCPServer`).
 - The `openai`, `anthropic` and `mcp` SDKs use `httpx2`, so mock them with `httpx2.MockTransport` via `http_client=`, not respx (D32).
 - OpenRouter: the account's privacy setting blocks DeepSeek's own host, so pin Fireworks then Together (D33).
-- A reference draft of steps 1-3 exists under tag `archive/claude-draft-m1-steps-1-3`. Don't consult or copy from it unless the user asks.
+- A draft of steps 1-3 exists under tag `archive/claude-draft-m1-steps-1-3`. Claude may reuse it for non-core parts. Never use it to fill in, or hint at, a core piece unless the user asks.

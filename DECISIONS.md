@@ -71,6 +71,12 @@ A first draft of M1 steps 1-3 was written by Claude and then rolled back so the 
 - **D33. The primary model is pinned to the Fireworks host, then Together** (`provider.order=["Fireworks","Together"]`, `allow_fallbacks=false`). The account's OpenRouter privacy setting excludes hosts that may train on prompts, which removes DeepSeek's own host (OpenRouter 404 "No endpoints found … Paid model training violation"). Fireworks charges $0.21/$0.84 per 1M tokens, and OpenRouter reports the cost in `usage.cost`.
 - **D34. An OpenRouter 404 "No endpoints found" is retryable**, so the GLM fallback (D7) runs on routing failures. Other 4xx errors fail fast.
 
+## 2026-10-24: M1 step 1 (scaffold)
+
+- **D35. `/readyz` body is `{"status": "ready"|"not_ready", "checks": {name: "ok"|"error: ..."}}`**, returning 503 when any check fails or times out (2 s each, run concurrently). It's a probe, so it doesn't use the API error envelope. The MCP check calls the tool server's `/healthz`.
+- **D36. `make test` runs offline with no services; `make test-integration` needs Postgres and Redis** (from `make infra` or CI service containers). CI runs both, plus a `docker compose` boot that checks `/readyz`.
+- **D37. The coverage floor (80%, D31) applies to the whole `marketmind` package**, which is simpler than listing SPEC §14's four packages and stricter overall.
+
 ## Working mode (from 2026-10-24)
 
 Claude writes scaffolding, config, Docker and boilerplate. The core pieces are written by hand: the router, the executor's timeout and retry logic, the plan-and-execute loop, RRF merging, and anything else an interviewer could ask "how does this work?" about. For those, Claude leaves `TODO(you)` stubs with failing tests. See CLAUDE.md.
