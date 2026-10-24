@@ -66,3 +66,9 @@ Choices that refine, resolve, or override `SPEC.md`. Newest entries at the botto
   - Revisit when a CPython 3.12 release ships the `ssl` SPKI blocklist.
 - **D31. `/readyz` body is `{"status": "ready"|"not_ready", "checks": {name: "ok"|"error: ..."}}`**, returning 503 when any check fails or times out (2 s each, run concurrently). It's a probe, so it doesn't use the API error envelope. The MCP check calls the tool server's `/healthz`.
 - **D32. `make test` runs offline with no services; `make test-integration` needs Postgres and Redis** (from `make infra` or CI service containers). CI runs both, plus a `docker compose` boot that checks `/readyz`.
+
+## 2026-10-24: M1 step 2 (core)
+
+- **D33. `pytest-cov` approved.** `make test` runs with `--cov` and fails under 80%. The threshold applies to the whole `marketmind` package, which is stricter than SPEC §14's four packages and simpler to configure.
+- **D34. Every response, including 404, 405, validation errors and unhandled 500s, uses the error envelope** `{"error": {"code", "message", "trace_id"}}`, and every response carries an `x-trace-id` header. The 500 message never includes exception details. The trace id is always generated server-side, and incoming `x-trace-id` headers are ignored (P3 may honour W3C `traceparent`).
+- **D35. Log redaction by key name and type:** keys equal to, or ending in `_` plus, `api_key`, `authorization`, `password`, `secret` or `token` are replaced with `[redacted]`, as are all `SecretStr` values. The suffix rule keeps the spec's `tokens_in`/`tokens_out` fields readable. API keys in `Settings` are `SecretStr`.

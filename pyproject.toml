@@ -13,7 +13,9 @@ dependencies = [
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.14.1",
     "pydantic-settings>=2.16.1",
+    "python-ulid>=4.0.1",
     "redis>=8.1.0",
+    "structlog>=26.1.0",
     "uvicorn>=0.54.0",
 ]
 
@@ -27,6 +29,7 @@ dev = [
     "pre-commit>=4.7.0",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
     "respx>=0.23.1",
     "ruff>=0.17.2",
 ]
@@ -59,3 +62,13 @@ markers = [
     "integration: needs Postgres and Redis (docker compose); run with `make test-integration`",
     "live: real LLM and external APIs; skipped unless LIVE_TESTS=1",
 ]
+
+[tool.coverage.run]
+source = ["marketmind"]
+branch = true
+
+[tool.coverage.report]
+# SPEC §14 requires >= 80% on agent/, mcp_client/, rag/, tools/; enforced on the whole package.
+fail_under = 80
+show_missing = true
+skip_covered = true
