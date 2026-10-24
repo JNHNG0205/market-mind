@@ -29,7 +29,8 @@ jobs:
       REDIS_URL: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      # setup-uv publishes no floating major tag; pinned by SHA (v10.2.0).
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7
         with:
           version: "0.13.5" # >= 0.13.4 for the eMudhra/emSign CA fix (DECISIONS.md D30)
           enable-cache: true
