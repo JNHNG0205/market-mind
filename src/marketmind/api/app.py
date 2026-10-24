@@ -7,7 +7,10 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from marketmind.api import readiness
+from marketmind.api.errors import install_error_handlers
+from marketmind.api.middleware import TraceMiddleware
 from marketmind.core.config import Settings
+from marketmind.core.logging import configure_logging
 
 ReadinessCheck = Callable[[], Awaitable[None]]
 
@@ -24,6 +27,8 @@ async def _run_check(check: ReadinessCheck, timeout_s: float) -> str:
 
 def create_app(checks: Mapping[str, ReadinessCheck], timeout_s: float = 2.0) -> FastAPI:
     app = FastAPI(title="MarketMind", version="0.1.0")
+    app.add_middleware(TraceMiddleware)
+    install_error_handlers(app)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
@@ -46,6 +51,7 @@ def create_app(checks: Mapping[str, ReadinessCheck], timeout_s: float = 2.0) -> 
 def create_default_app() -> FastAPI:
     """Entry point for uvicorn: `uvicorn --factory marketmind.api.app:create_default_app`."""
     settings = Settings()
+    configure_logging(settings.log_level, json=settings.log_json)
     checks: dict[str, ReadinessCheck] = {
         "postgres": lambda: readiness.check_postgres(settings.database_url),
         "redis": lambda: readiness.check_redis(settings.redis_url),

@@ -25,7 +25,7 @@ mcp:
 
 # Offline, no services, no keys.
 test:
-	uv run pytest -m "not integration and not live"
+	uv run pytest -m "not integration and not live" --cov
 
 # Needs `make infra` (or CI service containers).
 test-integration:
