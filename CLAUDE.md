@@ -19,6 +19,7 @@ docker compose up            # full stack (demo / clean-machine check)
 
 - One branch and one PR per checklist step: `feat/m1-NN-<slug>`. Open the PR with `gh` once CI is green, then wait for the user's OK; squash-merge with `gh pr merge --squash` only after the OK, then branch the next step from the updated `main`.
 - Conventional commit messages. Tests go in the same commit as the code; every bug fix adds a regression test first.
+- No AI attribution anywhere: no `Co-Authored-By: Claude` trailers in commits, and no "Generated with Claude Code" lines in PR descriptions.
 - If something is ambiguous: choose the simplest option, add it to `DECISIONS.md`, and continue.
 - Use only dependencies listed in `SPEC.md` §3 or approved in `DECISIONS.md`; propose anything else with a reason before adding it.
 
