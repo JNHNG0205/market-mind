@@ -73,4 +73,4 @@ A first draft of M1 steps 1-3 was written by Claude and then rolled back so the 
 
 ## Working mode (from 2026-10-24)
 
-Claude writes scaffolding, config, Docker and boilerplate. The core pieces are written by hand: the router, the executor's timeout and retry logic, the plan-and-execute loop, RRF merging, and anything else an interviewer could ask "how does this work?" about. For those, Claude leaves `TODO(you)` stubs with failing tests. See CLAUDE.md.
+The user writes all the code, scaffold included. Claude gives step-by-step instructions (commands, files, spec per file, docs, done-check) and reviews. See CLAUDE.md. The scaffold Claude wrote earlier (PR #4) was removed from `main` so it can be rebuilt by hand.
