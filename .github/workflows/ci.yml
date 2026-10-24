@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg16
+        env:
+          POSTGRES_USER: marketmind
+          POSTGRES_PASSWORD: marketmind
+          POSTGRES_DB: marketmind
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U marketmind -d marketmind"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis:7.4.11-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      DATABASE_URL: postgresql+psycopg://marketmind:marketmind@localhost:5432/marketmind
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.5" # >= 0.13.4 for the eMudhra/emSign CA fix (DECISIONS.md D30)
+          enable-cache: true
+      - run: uv sync --locked
+      - run: make lint
+      - run: make typecheck
+      - run: make test
+      - run: make test-integration
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker compose build --pull --no-cache
+      - run: docker compose up -d --wait
+      - run: curl -fsS http://localhost:8000/readyz
+      - if: failure()
+        run: docker compose logs
