@@ -1,0 +1,53 @@
+[project]
+name = "marketmind"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "JNHNG0205", email = "heng.teh0205@gmail.com" }
+]
+requires-python = ">=3.12, <3.13"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.2",
+]
+
+[tool.uv]
+constraint-dependencies = ["certifi>=2026.10.19"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E","F","W","I","B","UP","SIM","RUF","ASYNC","PT","N"]
+
+[tool.mypy]
+strict = true 
+python_version = "3.12"
+mypy_path = "src"
+packages = ["marketmind", "tests"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts= "-ra --strict-markers"
+markers = ["integration", "live"]
+
+[tool.coverage.run]
+source = ["marketmind"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
