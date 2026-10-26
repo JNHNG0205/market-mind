@@ -4,15 +4,16 @@ repos:
       - id: ruff-format
         name: Ruff Format
         entry: uv run ruff format
-        language: python
+        language: system
         types: [python]
       - id: ruff-check
         name: Ruff Check
         entry: uv run ruff check --fix
-        language: python
+        language: system
         types: [python]
       - id: mypy
         name: Mypy
         entry: uv run mypy
-        language: python
+        language: system
         types: [python]
+        pass_filenames: false

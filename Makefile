@@ -10,4 +10,6 @@ format:
 	uv run ruff check --fix .
 
 typecheck:
-	uv run mypy 
+	uv run mypy
+
+.PHONY: test lint format typecheck
