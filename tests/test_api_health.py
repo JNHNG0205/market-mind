@@ -1,8 +1,9 @@
 import asyncio
 
 import httpx
+from fastapi import FastAPI
 
-from marketmind.api.app import create_app
+from marketmind.api.app import create_app, create_default_app
 
 
 async def ok() -> None:
@@ -60,3 +61,8 @@ async def test_api_readyz_timeout() -> None:
         "status": "not_ready",
         "checks": {"postgres": "error: timeout after 0.05s", "redis": "ok", "mcp": "ok"},
     }
+
+
+def test_api_default_app() -> None:
+    app = create_default_app()
+    assert isinstance(app, FastAPI)

@@ -4,6 +4,9 @@ from collections.abc import Awaitable, Callable, Mapping
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from marketmind.api.readiness import check_mcp, check_postgres, check_redis
+from marketmind.core.config import Settings
+
 
 async def _run_check(check: Callable[[], Awaitable[None]], timeout_s: float) -> str:
     try:
@@ -36,3 +39,13 @@ def create_app(
             return JSONResponse(content={"status": "not_ready", "checks": report}, status_code=503)
 
     return app
+
+
+def create_default_app() -> FastAPI:
+    settings = Settings()
+    checks = {
+        "postgres": lambda: check_postgres(settings.database_url),
+        "redis": lambda: check_redis(settings.redis_url),
+        "mcp": lambda: check_mcp(settings.mcp_server_url),
+    }
+    return create_app(checks, timeout_s=settings.readiness_timeout_s)
