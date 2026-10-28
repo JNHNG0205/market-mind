@@ -17,7 +17,9 @@ async def test_readiness_postgres() -> None:
 async def test_readiness_pgvector() -> None:
     settings = Settings()
     async with await psycopg.AsyncConnection.connect(libpq_dsn(settings.database_url)) as conn:
-        await conn.execute("SELECT 1 FROM pg_available_extensions WHERE name = 'vector'")
+        cursor = await conn.execute("SELECT 1 FROM pg_available_extensions WHERE name = 'vector'")
+        row = await cursor.fetchone()
+        assert row is not None
 
 
 async def test_readiness_redis() -> None:
@@ -33,6 +35,7 @@ async def test_readyz() -> None:
         response = await client.get("/readyz")
         assert response.status_code == 503
         body = response.json()
+        # todo: mcp-tools is not in compose yet
         assert body["status"] == "not_ready"
         assert body["checks"]["postgres"] == "ok"
         assert body["checks"]["redis"] == "ok"
