@@ -11,5 +11,14 @@ format:
 
 typecheck:
 	uv run mypy
+	
+infra:
+	docker compose up -d --wait postgres redis
 
-.PHONY: test lint format typecheck
+infra-down:
+	docker compose down
+
+test-integration:
+	uv run pytest -m "integration"
+
+.PHONY: test lint format typecheck infra infra-down test-integration
