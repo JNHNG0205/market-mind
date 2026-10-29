@@ -21,4 +21,10 @@ infra-down:
 test-integration:
 	uv run pytest -m "integration"
 
-.PHONY: test lint format typecheck infra infra-down test-integration
+api:
+	uv run uvicorn --factory marketmind.api.app:create_default_app --reload --port 8000
+
+mcp:
+	uv run uvicorn --factory marketmind.tools.server:create_app --reload --port 8001
+
+.PHONY: test lint format typecheck infra infra-down test-integration api mcp

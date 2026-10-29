@@ -9,6 +9,7 @@ requires-python = ">=3.12, <3.13"
 dependencies = [
     "fastapi>=0.162.0",
     "httpx>=0.28.1",
+    "mcp>=2.3.0",
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.14.1",
     "pydantic-settings>=2.16.1",
@@ -46,6 +47,7 @@ strict = true
 python_version = "3.12"
 mypy_path = "src"
 packages = ["marketmind", "tests"]
+plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
