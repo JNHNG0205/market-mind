@@ -33,10 +33,9 @@ async def test_readyz() -> None:
         transport=httpx.ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.get("/readyz")
-        assert response.status_code == 503
+        assert response.status_code == 200
         body = response.json()
-        # todo: mcp-tools is not in compose yet
-        assert body["status"] == "not_ready"
+        assert body["status"] == "ready"
         assert body["checks"]["postgres"] == "ok"
         assert body["checks"]["redis"] == "ok"
-        assert body["checks"]["mcp"].startswith("error: ConnectError:")
+        assert body["checks"]["mcp"] == "ok"

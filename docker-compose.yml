@@ -30,7 +30,61 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
+  
+  mcp-tools:
+    build: .
+
+    command:
+      uvicorn --factory marketmind.tools.server:create_app --host 0.0.0.0 --port 8001
+
+    environment:
+      MCP_HOST: 0.0.0.0
+
+    env_file:
+      - path: .env
+        required: false
+    
+    ports:
+      - "8001:8001"
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/healthz')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  
+  api:
+    build: .
+    
+    command:
+      uvicorn --factory marketmind.api.app:create_default_app --host 0.0.0.0 --port 8000
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketmind:marketmind@postgres:5432/marketmind
+      REDIS_URL: redis://redis:6379/0
+      MCP_SERVER_URL: http://mcp-tools:8001/mcp
+    
+    env_file:
+      - path: .env
+        required: false
+    
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mcp-tools:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/readyz')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
 
 volumes:
-    pgvector_data:
+  pgvector_data:
     

@@ -71,6 +71,10 @@ A first draft of M1 steps 1-3 was written by Claude and then rolled back so the 
 - **D33. The primary model is pinned to the Fireworks host, then Together** (`provider.order=["Fireworks","Together"]`, `allow_fallbacks=false`). The account's OpenRouter privacy setting excludes hosts that may train on prompts, which removes DeepSeek's own host (OpenRouter 404 "No endpoints found … Paid model training violation"). Fireworks charges $0.21/$0.84 per 1M tokens, and OpenRouter reports the cost in `usage.cost`.
 - **D34. An OpenRouter 404 "No endpoints found" is retryable**, so the GLM fallback (D7) runs on routing failures. Other 4xx errors fail fast.
 
+## 2026-10-29: decisions made during M1 step 1
+
+- **D35. Integration tests run against the full compose stack.** `make up` builds the images (`--pull --no-cache`, per D30) and starts all four services; `make test-integration` then expects `/readyz` to return 200. `make infra` plus `make api`/`make mcp` on the host (D26) remains the dev loop. The two modes both bind ports 8000 and 8001, so run one or the other, not both.
+
 ## Working mode (from 2026-10-24)
 
 The user writes all the code, scaffold included. Claude gives step-by-step instructions (commands, files, spec per file, docs, done-check) and reviews. See CLAUDE.md. The scaffold Claude wrote earlier (PR #4) was removed from `main` so it can be rebuilt by hand.
