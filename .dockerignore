@@ -1,0 +1,15 @@
+# environment values
+.env
+.venv
+
+.git 
+
+# cache
+.mypy_cache
+.ruff_cache
+.pytest_cache
+**/__pycache__
+
+# tests
+.coverage
+tests

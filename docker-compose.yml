@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg16 
+
+    environment:
+      POSTGRES_USER: marketmind
+      POSTGRES_PASSWORD: marketmind
+      POSTGRES_DB: marketmind
+
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketmind -d marketmind"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  
+  redis:
+    image: redis:7.4.11-alpine
+
+    ports:
+      - "6379:6379"
+
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  
+  mcp-tools:
+    build: .
+
+    command:
+      uvicorn --factory marketmind.tools.server:create_app --host 0.0.0.0 --port 8001
+
+    environment:
+      MCP_HOST: 0.0.0.0
+
+    env_file:
+      - path: .env
+        required: false
+    
+    ports:
+      - "8001:8001"
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/healthz')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  
+  api:
+    build: .
+    
+    command:
+      uvicorn --factory marketmind.api.app:create_default_app --host 0.0.0.0 --port 8000
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketmind:marketmind@postgres:5432/marketmind
+      REDIS_URL: redis://redis:6379/0
+      MCP_SERVER_URL: http://mcp-tools:8001/mcp
+    
+    env_file:
+      - path: .env
+        required: false
+    
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mcp-tools:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/readyz')"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgvector_data:
+    

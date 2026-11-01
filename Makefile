@@ -12,4 +12,25 @@ format:
 typecheck:
 	uv run mypy
 
-.PHONY: test lint format typecheck
+infra:
+	docker compose up -d --wait postgres redis
+
+infra-down:
+	docker compose down
+
+test-integration:
+	uv run pytest -m "integration"
+
+api:
+	uv run uvicorn --factory marketmind.api.app:create_default_app --reload --port 8000
+
+mcp:
+	uv run uvicorn --factory marketmind.tools.server:create_app --reload --port 8001
+
+build:
+	docker compose build --pull --no-cache
+
+up: build
+	docker compose up -d --wait
+
+.PHONY: test lint format typecheck infra infra-down test-integration api mcp build up
