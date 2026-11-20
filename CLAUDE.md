@@ -3,7 +3,7 @@
 A Python 3.12 async service that answers crypto research questions and runs paper trades through a LangGraph agent. Tools live in a separate FastMCP server process.
 
 - **Source of truth:** `SPEC.md`. Decisions that refine or override the spec are in `DECISIONS.md`; read both before starting a step.
-- **Current state:** no code yet. M1 restarts from step 1 (scaffold). Target 2026-10-31.
+- **Current state (2026-11-18):** M1 step 1 (scaffold) is done: PR #5 merged 2026-11-01 and CI is green on `main`. Next is step 2 (core). The original M1 target was 2026-10-31.
 
 ## Working mode: the user writes all the code; Claude instructs and reviews
 

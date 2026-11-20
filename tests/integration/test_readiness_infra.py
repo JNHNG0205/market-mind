@@ -33,7 +33,7 @@ async def test_readyz() -> None:
         transport=httpx.ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.get("/readyz")
-        assert response.status_code == 200
+        assert response.status_code == 200, f"Response: {response.text}"
         body = response.json()
         assert body["status"] == "ready"
         assert body["checks"]["postgres"] == "ok"
